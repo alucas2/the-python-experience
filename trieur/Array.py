@@ -5,11 +5,6 @@ SCR_H = 600
 FRAMERATE = 60
 FENETRE = pyg.display.set_mode((SCR_W, SCR_H))
 KHRONO = pyg.time.Clock()
-FONT = pyg.font.SysFont("Arial", 20)
-PLAYER = pyg.midi.Output(0)
-PLAYER.set_instrument(5)
-NOTE_MIN = 21
-NOTE_MAX = 109
 
 COLOR_BG = (0, 0, 0)
 COLOR_BAR = (255, 255, 255)
@@ -63,7 +58,6 @@ class Array:
         self.drawRate = 0
         self.drawCount = self.drawRate
         self.highlight = set()
-        self.mustQuit = False
         self.array = [ArrayElement(i, self) for i in iterable]
         self.note = 0
 
@@ -89,10 +83,10 @@ class Array:
 
     #affiche
     def _draw(self):
-        if self.drawCount == 0 and not self.mustQuit:
+        if self.drawCount == 0:
             KHRONO.tick_busy_loop(FRAMERATE)
             for e in pyg.event.get():
-                if e.type == pyg.QUIT: self.mustQuit = True
+                if e.type == pyg.QUIT: raise KeyboardInterrupt()
             FENETRE.fill(COLOR_BG)
             w = SCR_W / self.size
             h = SCR_H / self.max
@@ -105,10 +99,6 @@ class Array:
                 pyg.draw.rect(FENETRE, COLOR_HIGHLIGHT, (i*w, (m-v)*h, w, v*h))
             pyg.display.flip()
             self.drawCount = self.drawRate
-            val = self.array[self.highlight.pop()]._value
-            PLAYER.note_off(self.note, 127)
-            self.note = int(mapValue(val, 0, self.size, NOTE_MIN, NOTE_MAX))
-            PLAYER.note_on(self.note, 127)
 
         else:
             self.drawCount -= 1
