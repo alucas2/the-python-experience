@@ -35,12 +35,15 @@ def save_analysis(markov_probs, filename):
     f.close()
 
 
+import sys
 
-markov_probs = analyse_dict("francais.txt", 3)
-save_analysis(markov_probs, "analyse_francais_ordre3.txt")
+try:
+    filename = sys.argv[1]
+    order = int(sys.argv[2])
+except:
+    print("Utilisation: python analyse.py <words_file> <order>")
+    sys.exit(-1)
 
-markov_probs = analyse_dict("english.txt", 3)
-save_analysis(markov_probs, "analyse_english_ordre3.txt")
-
-markov_probs = analyse_dict("deutsch.txt", 3)
-save_analysis(markov_probs, "analyse_deutsch_ordre3.txt")
+markov_probs = analyse_dict(filename, order)
+outputname = filename.split(".")[0] + "_order_" + str(order) + ".txt"
+save_analysis(markov_probs, outputname)

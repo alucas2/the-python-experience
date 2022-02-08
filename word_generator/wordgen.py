@@ -4,10 +4,11 @@ import ast
 
 def load_analysis(filename):
     f = open(filename, "r")
-    result = ast.literal_eval(f.read())
+    markov_probs = ast.literal_eval(f.read())
     f.close()
-    assert(type(result) == dict)
-    return result
+    assert(type(markov_probs) == dict)
+    order = len(next(iter(markov_probs)))
+    return markov_probs, order
 
 
 def sample_distribution(distribution):
@@ -30,9 +31,16 @@ def generate_word(markov_probs, order, truncate, begin=""):
     return word.strip()
 
 
-markov_probs = load_analysis("analyse_francais_ordre3.txt")
-#markov_probs = load_analysis("analyse_english_ordre3.txt")
-#markov_probs = load_analysis("analyse_deutsch_ordre3.txt")
+import sys
 
-for i in range(20):
-    print(generate_word(markov_probs, 3, 20))
+try:
+    filename = sys.argv[1]
+    num = int(sys.argv[2])
+except:
+    print("Utilisation: python worgen.py <analysis_file> <number_of_words>")
+    sys.exit(-1)
+
+markov_probs, order = load_analysis(filename)
+
+for i in range(num):
+    print(generate_word(markov_probs, order, 20))

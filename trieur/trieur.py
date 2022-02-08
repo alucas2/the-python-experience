@@ -1,5 +1,4 @@
 import pygame as pyg
-from pygame import midi
 pyg.init()
 from Array import Array
 from shuffle import shuffle, isSorted
